@@ -8,4 +8,5 @@ dependencies = [
     "aiogram>=3.26.0",
     "openai>=2.29.0",
     "python-dotenv>=1.2.2",
+    "tiktoken>=0.12.0",
 ]

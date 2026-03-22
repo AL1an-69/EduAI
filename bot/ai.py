@@ -2,6 +2,9 @@ from openai import AsyncOpenAI
 import os
 from dotenv import load_dotenv
 
+from token_utils import count_tokens
+from token_utils import MAX_TOKENS
+
 load_dotenv()
 
 history={}
@@ -15,14 +18,25 @@ client = AsyncOpenAI(
 )
 
 async def ai_generate(text: str, user_id: int):
+    
     if user_id not in history:
         history[user_id] = [{"role": "system", "content": SYSTEM_PROMPT}]
     
     history[user_id].append({"role": "user", "content": text})
     
+    
+    """Подсчет токенов"""
+    while count_tokens(history[user_id]) > MAX_TOKENS:
+        if len(history[user_id]) <= 2:  
+            break
+        history[user_id].pop(1)  
+
+
+    
     response = await client.chat.completions.create(
-        model="deepseek/deepseek-v3.2",
+        model=os.getenv('AI_MODEL'),
         messages=history[user_id],
+        max_tokens=500
     )
     
     answer = response.choices[0].message.content
@@ -44,9 +58,18 @@ async def ai_generate_image(image_url: str, user_id: int, caption: str = "Объ
         ]
     })
     
+    """Подсчет токенов"""
+    while count_tokens(history[user_id]) > MAX_TOKENS:
+        if len(history[user_id]) <= 2:  
+            break
+        history[user_id].pop(1)   
+
+
+
     response = await client.chat.completions.create(
-        model="anthropic/claude-3-haiku",
+        model=os.getenv('AI_MODEL'),
         messages=history[user_id],
+        max_tokens=500
     )
     
     answer = response.choices[0].message.content
