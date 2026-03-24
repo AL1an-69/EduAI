@@ -9,7 +9,7 @@ load_dotenv()
 
 history={}
 
-with open("bot/prompt/system_prompt_v1.3.txt", "r", encoding="utf-8") as f:
+with open("bot/prompt/system_prompt.txt", "r", encoding="utf-8") as f:
     SYSTEM_PROMPT = f.read()
 
 client = AsyncOpenAI(
