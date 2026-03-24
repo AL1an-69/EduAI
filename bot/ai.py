@@ -13,8 +13,8 @@ with open("bot/prompt/system_prompt_v1.3.txt", "r", encoding="utf-8") as f:
     SYSTEM_PROMPT = f.read()
 
 client = AsyncOpenAI(
-  base_url="https://openrouter.ai/api/v1",
-  api_key=os.getenv('DEEPSEEK_TOKEN'),
+#   base_url="https://openrouter.ai/api/v1",
+  api_key=os.getenv('CHATGPT_TOKEN'),
 )
 
 async def ai_generate(text: str, user_id: int):
@@ -36,7 +36,6 @@ async def ai_generate(text: str, user_id: int):
     response = await client.chat.completions.create(
         model=os.getenv('AI_MODEL'),
         messages=history[user_id],
-        max_tokens=500
     )
     
     answer = response.choices[0].message.content
@@ -69,7 +68,6 @@ async def ai_generate_image(image_url: str, user_id: int, caption: str = "Объ
     response = await client.chat.completions.create(
         model=os.getenv('AI_MODEL'),
         messages=history[user_id],
-        max_tokens=500
     )
     
     answer = response.choices[0].message.content
