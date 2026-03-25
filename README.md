@@ -26,7 +26,7 @@ ssh root@89.208.97.45
 Подтянуть последние изменения с GitHub:
 
 ```bash
-cd /путь/до/проекта
+cd EduAI
 git pull origin master
 ```
 
