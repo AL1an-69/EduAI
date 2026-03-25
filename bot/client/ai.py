@@ -1,21 +1,28 @@
-from openai import AsyncOpenAI
+import asyncio
+
 import os
 from dotenv import load_dotenv
 
-from token_utils import count_tokens
-from token_utils import MAX_TOKENS
+from client.core import client
+from client.core import SYSTEM_PROMPT
+
+from client.history import trim_history
+from client.history import history 
+
 
 load_dotenv()
 
-history={}
+"""Безопасный запрос к API"""
+async def safe_request(func):
+    for _ in range(3):
+        try:
+            return await func()
+        except:
+            await asyncio.sleep(1)
+    raise Exception("Ошибка подключения к API")
 
-with open("bot/prompt/system_prompt.txt", "r", encoding="utf-8") as f:
-    SYSTEM_PROMPT = f.read()
 
-client = AsyncOpenAI(
-#   base_url="https://openrouter.ai/api/v1",
-  api_key=os.getenv('CHATGPT_TOKEN'),
-)
+
 
 async def ai_generate(text: str, user_id: int):
     
@@ -25,18 +32,14 @@ async def ai_generate(text: str, user_id: int):
     history[user_id].append({"role": "user", "content": text})
     
     
-    """Подсчет токенов"""
-    while count_tokens(history[user_id]) > MAX_TOKENS:
-        if len(history[user_id]) <= 2:  
-            break
-        history[user_id].pop(1)  
-
+    await trim_history(user_id)
 
     
-    response = await client.chat.completions.create(
+    response = await safe_request(lambda: client.chat.completions.create(
         model=os.getenv('AI_MODEL'),
+        temperature=0.4,
         messages=history[user_id],
-    )
+    ))
     
     answer = response.choices[0].message.content
     history[user_id].append({"role": "assistant", "content": answer})
@@ -57,18 +60,15 @@ async def ai_generate_image(image_url: str, user_id: int, caption: str = "Объ
         ]
     })
     
-    """Подсчет токенов"""
-    while count_tokens(history[user_id]) > MAX_TOKENS:
-        if len(history[user_id]) <= 2:  
-            break
-        history[user_id].pop(1)   
+    await trim_history(user_id) 
 
 
 
-    response = await client.chat.completions.create(
+    response = await safe_request(lambda: client.chat.completions.create(
         model=os.getenv('AI_MODEL'),
+        temperature=0.4,
         messages=history[user_id],
-    )
+    ))  
     
     answer = response.choices[0].message.content
     history[user_id].append({"role": "assistant", "content": answer})

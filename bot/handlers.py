@@ -7,7 +7,7 @@ from aiogram.fsm.context import FSMContext
 from dotenv import load_dotenv
 import os
 
-from ai import ai_generate,ai_generate_image
+from client.ai import ai_generate,ai_generate_image
 
 load_dotenv()
 
@@ -21,7 +21,8 @@ class Gen(StatesGroup):
 
 @router.message(CommandStart())
 async def cmd_start(message: Message):
-    await message.answer('Привет, я бот который помогает в подготовке к Егэ по математике')
+    await message.answer('Привет, я бот который помогает в подготовке к Егэ по математике! '
+'Сайт команды, которая созадала меня: https://breach-ai.ru/')
 
 @router.message(Gen.wait)
 async def stop_flood(message: Message):

@@ -1,6 +1,10 @@
 import tiktoken
+from dotenv import load_dotenv
+import os
 
-def count_tokens(messages, model="claude-3-haiku"):
+load_dotenv()
+
+def count_tokens(messages, model=os.getenv('CHATGPT_TOKEN')):
     """Подсчет токенов для текстовых и мультимодальных сообщений"""
     encoding = tiktoken.get_encoding("cl100k_base")
     tokens = 0
@@ -24,4 +28,4 @@ def count_tokens(messages, model="claude-3-haiku"):
     
     return tokens
 
-MAX_TOKENS = 40000  # максимальное количество токенов в истории
+MAX_TOKENS = 10000  # максимальное количество токенов в истории 
