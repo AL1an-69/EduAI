@@ -21,8 +21,7 @@ class Gen(StatesGroup):
 
 @router.message(CommandStart())
 async def cmd_start(message: Message):
-    await message.answer('Привет, я бот который помогает в подготовке к Егэ по математике! '
-'Сайт команды, которая созадала меня: https://breach-ai.ru/')
+    await message.answer('Привет, я бот который помогает в подготовке к Егэ по математике!')
 
 @router.message(Gen.wait)
 async def stop_flood(message: Message):
