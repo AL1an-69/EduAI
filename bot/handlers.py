@@ -40,7 +40,10 @@ async def get_photo(message: Message, state: FSMContext):
 
     
     response = await ai_generate_image(file_url, message.from_user.id)
-    await message.answer(response)
+    try:
+        await message.answer(response, parse_mode='Markdown')
+    except Exception as e:
+        await message.answer(response)
     await state.clear()
 
 @router.message()
@@ -48,7 +51,10 @@ async def get_message(message: Message, state: FSMContext):
     await state.set_state(Gen.wait)
     await message.answer('Генерирую ответ...')
     response = await ai_generate(message.text, message.from_user.id)  
-    await message.answer(response)
+    try:
+        await message.answer(response, parse_mode='Markdown')
+    except Exception as e:
+        await message.answer(response)
     await state.clear()
 
 
