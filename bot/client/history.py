@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
-from client.ai import client
-from client.ai import SYSTEM_PROMPT
+from client.core import client
+from client.core import SYSTEM_PROMPT
 
 from client.token_utils import count_tokens
 from client.token_utils import MAX_TOKENS
