@@ -15,7 +15,7 @@ history={}
 async def make_summary(messages: list) -> str:
     try:
         response = await client.chat.completions.create(
-            model=os.getenv('CHATGPT_TOKEN'),
+            model=os.getenv('AI_MODEL'),
             temperature=0.2,  # почти без креатива
             messages=[
                 {

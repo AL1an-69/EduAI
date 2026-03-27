@@ -4,7 +4,7 @@ import os
 
 load_dotenv()
 
-def count_tokens(messages, model=os.getenv('CHATGPT_TOKEN')):
+def count_tokens(messages, model='cl100k_base'):
     """Подсчет токенов для текстовых и мультимодальных сообщений"""
     encoding = tiktoken.get_encoding("cl100k_base")
     tokens = 0

@@ -38,23 +38,38 @@ async def get_photo(message: Message, state: FSMContext):
     
     caption = message.caption or "Объясни задачу на фото"
 
-    
-    response = await ai_generate_image(file_url, message.from_user.id)
     try:
-        await message.answer(response, parse_mode='Markdown')
+        response = await ai_generate_image(file_url, message.from_user.id)
+        try:
+            await message.answer(response, parse_mode='Markdown')
+        except Exception as e:
+            await message.answer(response)
+    
     except Exception as e:
-        await message.answer(response)
-    await state.clear()
+        await message.answer(" Произошла ошибка при обработке фото. Попробуйте отправить его еще раз или опишите задачу текстом.")
+        print(f"Ошибка при обработке фото: {e}")
+    
+    finally:
+        await state.clear()
+
+
 
 @router.message()
 async def get_message(message: Message, state: FSMContext):
     await state.set_state(Gen.wait)
     await message.answer('Генерирую ответ...')
-    response = await ai_generate(message.text, message.from_user.id)  
+    
+    
     try:
-        await message.answer(response, parse_mode='Markdown')
+        response = await ai_generate(message.text, message.from_user.id)  
+        try:
+            await message.answer(response, parse_mode='Markdown')
+        except Exception as e:
+            await message.answer(response)
     except Exception as e:
-        await message.answer(response)
-    await state.clear()
+        await message.answer("Произошла ошибка при обработке запроса, попрбуйте еще раз.")
+        print(f"Ошибка при обработке запроса: {e}")
+    finally:
+        await state.clear()
 
 
