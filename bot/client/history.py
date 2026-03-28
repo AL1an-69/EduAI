@@ -16,7 +16,7 @@ async def make_summary(messages: list) -> str:
     try:
         response = await client.chat.completions.create(
             model=os.getenv('AI_MODEL'),
-            temperature=0.2,  # почти без креатива
+            temperature=0.2,  
             messages=[
                 {
                     "role": "system",

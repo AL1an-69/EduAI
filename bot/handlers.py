@@ -1,8 +1,9 @@
 from aiogram import F, Router
 from aiogram.types import Message
-from aiogram.filters import CommandStart
+from aiogram.filters import CommandStart, Command
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
+
 
 from dotenv import load_dotenv
 import os
@@ -23,6 +24,19 @@ class Gen(StatesGroup):
 async def cmd_start(message: Message):
     await message.answer('Привет, я бот который помогает в подготовке к Егэ по математике!')
 
+@router.message(Command('reset'))
+async def cmd_reset(message: Message):
+    from client.history import history
+    if message.from_user.id in history:
+        del history[message.from_user.id]
+    await message.answer("История очищена, начинаем заново!")
+
+@router.message(F.document | F.video | F.audio | F.voice | F.sticker | F.video_note)
+async def unsupported_content(message: Message):
+    await message.answer("Я принимаю только текст и фотографии. Попробуй описать задачу текстом или отправь фото.")
+
+
+
 @router.message(Gen.wait)
 async def stop_flood(message: Message):
     await message.answer('Подождите, я еще не ответил на предыдущий вопрос')
@@ -40,10 +54,8 @@ async def get_photo(message: Message, state: FSMContext):
 
     try:
         response = await ai_generate_image(file_url, message.from_user.id)
-        try:
-            await message.answer(response, parse_mode='Markdown')
-        except Exception as e:
-            await message.answer(response)
+        
+        await message.answer(response)
     
     except Exception as e:
         await message.answer(" Произошла ошибка при обработке фото. Попробуйте отправить его еще раз или опишите задачу текстом.")
@@ -71,5 +83,6 @@ async def get_message(message: Message, state: FSMContext):
         print(f"Ошибка при обработке запроса: {e}")
     finally:
         await state.clear()
+
 
 

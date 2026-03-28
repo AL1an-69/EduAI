@@ -17,7 +17,8 @@ async def safe_request(func):
     for _ in range(3):
         try:
             return await func()
-        except:
+        except Exception as e:
+            print(f"Ошибка: {e}")
             await asyncio.sleep(1)
     raise Exception("Ошибка подключения к API")
 
