@@ -40,7 +40,7 @@ async def ai_generate(text: str, user_id: int):
     
     response = await safe_request(lambda: client.chat.completions.create(
         model=os.getenv('AI_MODEL'),
-        temperature=0.4,
+        # temperature=0.4,
         messages=history[user_id],
     ))
     
@@ -48,6 +48,7 @@ async def ai_generate(text: str, user_id: int):
     history[user_id].append({"role": "assistant", "content": answer})
     
     return answer
+
 
 
 
@@ -72,7 +73,7 @@ async def ai_generate_image(image_url: str, user_id: int, caption: str = "Объ
 
         response = await safe_request(lambda: client.chat.completions.create(
             model=os.getenv('AI_MODEL'),
-            temperature=0.4,
+            # temperature=0.4,
             messages=history[user_id],
         ))  
         

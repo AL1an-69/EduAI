@@ -53,7 +53,7 @@ async def get_photo(message: Message, state: FSMContext):
     caption = message.caption or "Объясни задачу на фото"
 
     try:
-        response = await ai_generate_image(file_url, message.from_user.id)
+        response = await ai_generate_image(file_url, message.from_user.id,caption)
         
         await message.answer(response)
     
@@ -75,7 +75,7 @@ async def get_message(message: Message, state: FSMContext):
     try:
         response = await ai_generate(message.text, message.from_user.id)  
         try:
-            await message.answer(response, parse_mode='Markdown')
+            await message.answer(response)
         except Exception as e:
             await message.answer(response)
     except Exception as e:

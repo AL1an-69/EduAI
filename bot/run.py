@@ -13,8 +13,7 @@ load_dotenv()
 
 
 async def main():
-    bot = Bot(token=os.getenv('TELEGRAM_TOKEN'))
-    defoult_properties = DefaultBotProperties(parse_mode='MarkdownV2')
+    bot = Bot(token=os.getenv('TELEGRAM_TOKEN'), default=DefaultBotProperties(parse_mode='Markdown'))
     dp = Dispatcher()
     dp.include_router(router)
     await dp.start_polling(bot)
