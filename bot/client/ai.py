@@ -9,8 +9,28 @@ from client.core import SYSTEM_PROMPT
 from client.history import trim_history
 from client.history import history 
 
+from RAG.Methods.retriever import get_relevant_method
 
 load_dotenv()
+
+
+async def detect_topic(image_url: str) -> str:
+    try:
+        response = await client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{
+                "role": "user",
+                "content": [
+                    {"type": "image_url", "image_url": {"url": image_url}},
+                    {"type": "text", "text": "Определи тему этой математической задачи одним предложением"}
+                ]
+            }]
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        print(f"[detect_topic] ошибка: {e}")
+        return ""
+
 
 """Безопасный запрос к API"""
 async def safe_request(func):
@@ -27,8 +47,13 @@ async def safe_request(func):
 
 async def ai_generate(text: str, user_id: int):
     
+    method = get_relevant_method(text)
+    PROMPT = SYSTEM_PROMPT + "\n\n" + method if method else SYSTEM_PROMPT
+
     if user_id not in history:
-        history[user_id] = [{"role": "system", "content": SYSTEM_PROMPT}]
+        history[user_id] = [{"role": "system", "content": PROMPT}]
+    else:
+        history[user_id][0] = {"role": "system", "content": PROMPT}
     
     history[user_id].append({"role": "user", "content": text})
     
@@ -53,9 +78,15 @@ async def ai_generate(text: str, user_id: int):
 
 
 async def ai_generate_image(image_url: str, user_id: int, caption: str = "Объясни задачу на фото"):
-    if user_id not in history:
-        history[user_id] = [{"role": "system", "content": SYSTEM_PROMPT}]
     
+    method = get_relevant_method(await detect_topic(image_url))
+    PROMPT = SYSTEM_PROMPT + "\n\n" + method if method else SYSTEM_PROMPT
+    
+    if user_id not in history:
+        history[user_id] = [{"role": "system", "content": PROMPT}]
+    else:
+        history[user_id][0] = {"role": "system", "content": PROMPT}
+   
     message_content = {
         "role": "user",
         "content": [
