@@ -47,7 +47,7 @@ async def safe_request(func):
 
 async def ai_generate(text: str, user_id: int):
     
-    method = get_relevant_method(text)
+    method = await asyncio.to_thread(get_relevant_method, text)
     PROMPT = SYSTEM_PROMPT + "\n\n" + method if method else SYSTEM_PROMPT
 
     if user_id not in history:
@@ -79,7 +79,8 @@ async def ai_generate(text: str, user_id: int):
 
 async def ai_generate_image(image_url: str, user_id: int, caption: str = "Объясни задачу на фото"):
     
-    method = get_relevant_method(await detect_topic(image_url))
+    topic = await detect_topic(image_url)
+    method = await asyncio.to_thread(get_relevant_method, topic)
     PROMPT = SYSTEM_PROMPT + "\n\n" + method if method else SYSTEM_PROMPT
     
     if user_id not in history:

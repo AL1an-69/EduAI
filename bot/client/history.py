@@ -54,8 +54,9 @@ async def trim_history(user_id: int):
         summary = await make_summary(old_messages)
 
         # собираем новую историю
+        current_prompt = history[user_id][0]
         history[user_id] = [
-            {"role": "system", "content": SYSTEM_PROMPT},
+            current_prompt,
             {"role": "system", "content": f"Контекст диалога: {summary}"},
         ] + history[user_id][6:]
 

@@ -3,6 +3,8 @@ from aiogram.types import Message
 from aiogram.filters import CommandStart, Command
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
+from aiogram.enums import ChatAction
+
 
 
 from dotenv import load_dotenv
@@ -44,7 +46,9 @@ async def stop_flood(message: Message):
 @router.message(F.photo)
 async def get_photo(message: Message, state: FSMContext):
     await state.set_state(Gen.wait)
+    await message.chat.do(ChatAction.TYPING)
     await message.answer('Генерирую ответ...')
+
     
     photo = message.photo[-1]
     file = await message.bot.get_file(photo.file_id)
@@ -69,6 +73,7 @@ async def get_photo(message: Message, state: FSMContext):
 @router.message()
 async def get_message(message: Message, state: FSMContext):
     await state.set_state(Gen.wait)
+    await message.chat.do(ChatAction.TYPING)
     await message.answer('Генерирую ответ...')
     
     
