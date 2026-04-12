@@ -9,7 +9,7 @@ import shutil
 load_dotenv()
 
 
-DATA_PATH = "bot/methods_v2"
+DATA_PATH = "bot/methods_v3"
 
 def load_methods():
     loader = DirectoryLoader(DATA_PATH, glob="*.txt", loader_cls=TextLoader)

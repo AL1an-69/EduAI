@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 
 from client.core import client
 from client.core import SYSTEM_PROMPT
+from client.core import temp
+from client.core import ai_model
 
 from client.history import trim_history
 from client.history import history 
@@ -12,6 +14,8 @@ from client.history import history
 from RAG.Methods.retriever import get_relevant_method
 
 load_dotenv()
+
+
 
 
 async def detect_topic(image_url: str) -> str:
@@ -64,8 +68,8 @@ async def ai_generate(text: str, user_id: int):
 
     
     response = await safe_request(lambda: client.chat.completions.create(
-        model=os.getenv('AI_MODEL'),
-        # temperature=0.4,
+        model=ai_model,
+        temperature=temp,
         messages=history[user_id],
     ))
     
@@ -104,8 +108,8 @@ async def ai_generate_image(image_url: str, user_id: int, caption: str = "Объ
         await trim_history(user_id) 
 
         response = await safe_request(lambda: client.chat.completions.create(
-            model=os.getenv('AI_MODEL'),
-            # temperature=0.4,
+            model=ai_model,
+            temperature=temp,
             messages=history[user_id],
         ))  
         
